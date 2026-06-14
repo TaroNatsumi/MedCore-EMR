@@ -1,78 +1,100 @@
-# MedCore EMR - User Manual
+# User Manual – MedCore Electronic Medical Record System
 
 ## 1. Introduction
-Welcome to **MedCore**, a decentralized, AES-256 encrypted Electronic Medical Record (EMR) system. MedCore is designed to maximize data security by physically isolating employee credentials from sensitive patient medical histories across multiple databases.
+MedCore is a secure, decentralized web-based Electronic Medical Record (EMR) system that utilizes AES-256 encryption and a multi-database architecture to protect sensitive patient data. The system features three main interfaces:
+*   **Patient Portal** – for patients to securely view their medical history and download official PDF reports.
+*   **Employee Portal** – for hospital staff (Doctors, Registrars, Lab Technicians, Clinic Admins) to manage patient data, conduct encrypted consultations, process lab tests, and manage local hospital operations.
+*   **MedCore Control (Superadmin)** – a global administrative dashboard to manage the entire network of hospital branches and monitor system-wide processing logs.
 
-## 2. Roles and Access Levels
-MedCore utilizes strict Role-Based Access Control (RBAC). The available roles are:
-*   **Superadmin (MedCore Admin):** Global system overseer. Manages hospitals and clinic administrators.
-*   **Clinic Admin:** Manages employees (Doctors, Lab Techs, Registrars) within their specific hospital.
-*   **Registry (Регистратура):** Registers new patients and updates demographic information.
-*   **Doctor (Врач):** Conducts patient consultations, diagnoses illnesses, assigns lab tests, and manages AES-256 encrypted records.
-*   **Lab Technician (Лаборант):** Conducts assigned lab tests and uploads structured results/images.
-*   **Patient (Пациент):** Views their own medical history using their PINFL and Passport (Read-only access).
+The system is designed to be deployed live at:
+*   **Main Portal:** `https://<your-render-url>.onrender.com`
 
 ---
 
-## 3. Getting Started
-### 3.1 Logging In
-1. Navigate to the main login page.
-2. Select your role (Employee or Patient).
-3. **Employees:** Enter your assigned Email and Password.
-4. **Patients:** Enter your 14-digit PINFL and Passport series/number.
+## 2. Patient Portal – User Guide
+### 2.1 Login
+1. Open the main portal URL.
+2. Click **Login as Patient** on the landing page.
+3. Enter your **14-digit PINFL** and **Passport Series/Number**.
+4. Click **Login**. You will be securely authenticated and redirected to your "Health Mirror" dashboard.
+
+### 2.2 Dashboard – Viewing Medical History
+*   After logging in, your profile information (Full Name, Date of Birth, Blood Group) is displayed at the top.
+*   Below, you will see a chronological timeline of all your hospital visits across the MedCore network.
+*   Each visit card displays the Hospital Name, Doctor's Name, Date, Diagnosis, Symptoms, and Treatment Plan.
+*   Lab test results associated with the visit are also displayed natively within the card.
+
+### 2.3 Exporting Medical Records
+1. On your dashboard, locate the specific medical record you wish to download.
+2. Click the **Export to PDF** button on the record card.
+3. The system will dynamically generate and download an official PDF document containing the clinic's details, the doctor's signature field, and your encrypted medical data.
 
 ---
 
-## 4. Superadmin (MedCore Admin) Dashboard
-*Access: Global*
-*   **Add Hospital:** Click "Добавить клинику", enter the hospital name, address, and generate a unique API Key.
-*   **Add Clinic Admin:** Select a hospital, enter the admin's email and password. This admin will now have full control over that specific hospital's staff.
-*   **System Logs:** View real-time system processing logs tracking employee actions across all branches.
+## 3. Employee Portal – User Guide
+### 3.1 Doctor Workflow
+**Login:**
+1. Open the portal and click **Login as Employee**.
+2. Enter your assigned email address and password.
+3. Click **Login**. You will be routed to the Doctor Dashboard.
+
+**Searching for a Patient:**
+1. On the dashboard, enter the patient's 14-digit PINFL in the search bar.
+2. Click **Find Patient**. The search panel remains visible so you can easily switch to a new patient later.
+3. The patient's basic demographic data will appear.
+
+**Creating a New Record (AES-256 Encryption):**
+1. Once a patient is selected, scroll to the "New Consultation" form.
+2. Fill in the fields: Disease Name, Symptoms, Diagnosis, and Treatment.
+3. Click **Save Record**. The system instantly encrypts this payload using AES-256 before saving it to the `Global DB`.
+
+**Decrypting & Viewing History:**
+1. Scroll to the patient's medical history section.
+2. To read a past record, click the **Decrypt (Расшифровать)** button next to it.
+3. The server temporarily decrypts the data into memory (`temp_db`) and displays it on your screen.
+
+**Assigning Lab Tests:**
+1. Below the patient's active record, locate the **Assign Lab Test** section.
+2. Select the required test type (e.g., Blood Test, MRI) from the dropdown.
+3. Click **Assign**. The task is instantly sent to the Laboratory queue.
+
+**Secure Logout:**
+*   Click **Logout** in the navigation bar. The system will automatically purge any temporarily decrypted records associated with your session from the database, ensuring zero data leakage.
+
+### 3.2 Registry Workflow
+**Registering a New Patient:**
+1. Log in using a Registry account.
+2. Search for the patient using their PINFL to ensure they are not already in the system.
+3. If not found, fill out the Registration Form (Full Name, PINFL, Passport, Birth Date, Gender, Phone, Address).
+4. Click **Register Patient**.
+5. *Note: If you attempt to register a patient with a PINFL or Passport that already exists, the system will reject the request and display an `IntegrityError` warning.*
+
+### 3.3 Lab Technician Workflow
+**Processing Lab Tests:**
+1. Log in using a Lab Technician account.
+2. Your dashboard displays a real-time queue of tests assigned by doctors.
+3. Locate a pending test and click **Take into work (Взять в работу)**.
+4. Input the structured test results (e.g., specific biomarker levels).
+5. (Optional) Upload an image or document (e.g., X-ray scan).
+6. Click **Send to Doctor**. The status updates to `Completed`, and the results are attached to the doctor's encrypted record.
 
 ---
 
-## 5. Clinic Admin Dashboard
-*Access: Hospital-Specific*
-*   **Manage Staff:** Add new Doctors, Registrars, or Lab Techs to your hospital branch.
-*   **Update Schedules:** Edit working hours and shift types (Morning/Evening) for doctors.
-*   **Audit Logs:** Monitor employee login times and system actions for security auditing.
+## 4. Admin Panel – User Guide
+### 4.1 Clinic Admin
+*   **Managing Staff:** Log in to view your specific hospital's staff roster. Click **Add Employee** to create new accounts for Doctors, Registrars, or Lab Technicians.
+*   **Audit Logging:** Navigate to the Audit tab to view a secure log of all employee logins and actions within your hospital branch.
 
----
+### 4.2 Superadmin (MedCore Control)
+**Global Management:**
+1. Navigate to `/medcore/login/`.
+2. Log in with Superadmin credentials.
+3. You will see a global overview of all hospital branches connected to the decentralized network.
 
-## 6. Registry Dashboard
-*Access: Hospital-Specific*
-*   **Search Patient:** Enter a 14-digit PINFL to search for an existing patient across the global network.
-*   **Create Patient:** If the patient does not exist, fill in the registration form (Full Name, Passport, Birth Date, Blood Group, etc.). 
-    * *Note: The system will automatically block duplicate PINFLs or Passports to maintain data integrity.*
-*   **Update Info:** Modify phone numbers or chronic disease records for existing patients.
+**Adding a New Hospital:**
+1. Click **Add Clinic**.
+2. Enter the clinic's name and address. The system generates a unique API Key for that branch.
+3. Create an initial Clinic Admin account for that hospital so they can begin hiring staff.
 
----
-
-## 7. Doctor Dashboard
-*Access: Hospital-Specific*
-*   **Search Patient:** Enter the patient's PINFL to securely retrieve their records.
-*   **Create Record:** 
-    1. Enter the Disease Name.
-    2. Fill out Symptoms, Diagnosis, and Treatment Plans.
-    3. Click "Save". The system will instantly encrypt your input using AES-256 before saving it to the database.
-*   **View History:** Click "Расшифровать" (Decrypt) on a past record. The system temporarily decrypts the payload for viewing. *Note: For security, closing the session or logging out will instantly wipe the decrypted data from the server's memory.*
-*   **Assign Lab Tests:** While viewing a patient, select a test type (e.g., Blood Test, X-Ray) and assign it to the laboratory queue.
-
----
-
-## 8. Lab Technician Dashboard
-*Access: Hospital-Specific*
-*   **Task Queue:** View pending lab tests assigned by doctors.
-*   **Process Test:**
-    1. Click "Взять в работу" (Start).
-    2. Input structured test results (e.g., Hemoglobin levels) based on the test schema.
-    3. Upload images or scan files if necessary (e.g., MRI scans).
-    4. Click "Отправить врачу" (Send to Doctor). The results will instantly appear in the doctor's encrypted payload.
-
----
-
-## 9. Patient Portal
-*Access: Read-Only (Global)*
-*   **Login:** Enter your 14-digit PINFL and Passport number.
-*   **Dashboard:** View a timeline of your hospital visits.
-*   **Export Data:** Click the PDF export button to securely download an official, formatted report of your medical history and lab results.
+**Global Logs:**
+*   Click on **Processing Logs** to monitor real-time, system-wide actions across the entire `Global DB`. This tracks patient registrations, record decryptions, and cross-branch data access.
