@@ -8,11 +8,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Databases (CRITICAL for EMR system security)
-db.sqlite3
-employees.sqlite3
-temp.sqlite3
-*.sqlite3
+# Databases (TEMPORARILY UNBLOCKED FOR THESIS DEFENSE)
 
 # Django
 *.log
