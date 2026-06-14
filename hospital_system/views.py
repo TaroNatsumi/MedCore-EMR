@@ -1033,7 +1033,7 @@ def export_record_pdf(request, record_id):
         c.line(50, 60, width - 50, 60)
         
         if os.path.exists(font_path):
-            c.setFont("Arial", 8)
+            c.setFont("Roboto", 8)
         else:
             c.setFont("Helvetica", 8)
             
