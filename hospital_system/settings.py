@@ -3,11 +3,19 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-test-key-for-hospital'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app', 'https://*.trycloudflare.com', 'https://*.loca.lt', 'http://127.0.0.1:8000', 'http://localhost:8000']
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-test-key-for-hospital')
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
+ALLOWED_HOSTS = ['*'] # Ideally, you should restrict this to your Render domain in production
+CSRF_TRUSTED_ORIGINS = ['https://*.ngrok-free.app', 'https://*.trycloudflare.com', 'https://*.loca.lt', 'http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.onrender.com']
 
+# Production Security Settings (Enabled when DEBUG is False)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000 # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
 INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +46,7 @@ SPECTACULAR_SETTINGS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -96,6 +105,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
+STATIC_ROOT = BASE_DIR / "static_root"
 
 # Media settings (for uploading lab test images)
 MEDIA_URL = '/media/'
