@@ -963,19 +963,22 @@ def export_record_pdf(request, record_id):
         c = canvas.Canvas(response, pagesize=A4)
         width, height = A4
         
-        # Register Font (Windows Arial)
-        font_path = "C:\\Windows\\Fonts\\arial.ttf"
+        # Register Font (Local Roboto for Cyrillic Support on Linux/Render)
+        from django.conf import settings
+        import os
+        
+        font_path = os.path.join(settings.BASE_DIR, 'static', 'fonts', 'Roboto-Regular.ttf')
         if os.path.exists(font_path):
-            pdfmetrics.registerFont(TTFont('Arial', font_path))
-            c.setFont("Arial", 16)
+            pdfmetrics.registerFont(TTFont('Roboto', font_path))
+            c.setFont("Roboto", 16)
         else:
-            # Fallback (might break cyrillic)
+            # Fallback
             c.setFont("Helvetica-Bold", 16)
             
         c.drawString(50, height - 50, "МЕДИЦИНСКАЯ ВЫПИСКА (MedCore)")
         
         if os.path.exists(font_path):
-            c.setFont("Arial", 12)
+            c.setFont("Roboto", 12)
         else:
             c.setFont("Helvetica", 12)
             
