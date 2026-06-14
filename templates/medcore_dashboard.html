@@ -1,0 +1,125 @@
+{% extends "medcore_base.html" %}
+
+{% block title %}Список Больниц{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8" data-intro="Панель администратора MedCore позволяет управлять всеми больницами в системе." data-step="1">
+    <h2 class="text-3xl font-display font-bold text-white tracking-wide">Больницы в Системе</h2>
+    <button data-intro="Вы можете зарегистрировать новую больницу в глобальной системе." data-step="3" onclick="document.getElementById('add-modal').classList.remove('hidden')" class="px-5 py-2.5 bg-medcore-600 hover:bg-medcore-500 text-white font-bold rounded-xl shadow-lg transition-all flex items-center gap-2 text-sm">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+        Добавить больницу
+    </button>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" data-intro="Здесь отображается список всех подключенных больниц. Вы можете управлять их сотрудниками." data-step="2">
+    {% for h in hospitals %}
+    <div class="bg-slate-800/50 backdrop-blur border border-slate-700 hover:border-medcore-500/50 rounded-2xl p-6 transition-all group relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-medcore-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        
+        <div class="relative z-10">
+            <h3 class="text-xl font-bold text-white mb-1 group-hover:text-medcore-400 transition-colors">{{ h.name }}</h3>
+            <p class="text-xs text-slate-400 mb-6 flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                {{ h.address|default:"Адрес не указан" }}
+            </p>
+            
+            <div class="grid grid-cols-3 gap-3 mb-6 divide-x divide-slate-700/50 bg-slate-900/50 p-3 rounded-xl border border-slate-700/50">
+                <div class="text-center px-2">
+                    <p class="text-xl font-display font-bold text-slate-200">{{ h.admin_count }}</p>
+                    <p class="text-[9px] uppercase tracking-wider text-slate-500 font-bold mt-1">Админов</p>
+                </div>
+                <div class="text-center px-2">
+                    <p class="text-xl font-display font-bold text-slate-200">{{ h.patient_count }}</p>
+                    <p class="text-[9px] uppercase tracking-wider text-slate-500 font-bold mt-1">Пациентов</p>
+                </div>
+                <div class="text-center px-2">
+                    <p class="text-xl font-display font-bold text-slate-200">{{ h.record_count }}</p>
+                    <p class="text-[9px] uppercase tracking-wider text-slate-500 font-bold mt-1">Записей</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-2">
+                <a href="{% url 'medcore_hospital_detail' h.id %}" class="flex-grow block text-center py-2.5 bg-slate-700/30 hover:bg-medcore-600 text-white border border-slate-600 hover:border-medcore-500 rounded-lg text-sm font-bold transition-all">
+                    Управление
+                </a>
+                <form method="POST" action="{% url 'medcore_dashboard' %}" class="shrink-0" onsubmit="return confirm('ВНИМАНИЕ! Вы уверены, что хотите полностью удалить эту больницу и ВСЕХ её сотрудников? Это действие нельзя отменить!')">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_hospital">
+                    <input type="hidden" name="hospital_id" value="{{ h.id }}">
+                    <button type="submit" class="p-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/30 hover:border-red-500 rounded-lg transition-all" title="Удалить больницу">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-full py-20 text-center text-slate-500 border border-dashed border-slate-700 rounded-3xl">
+        В системе пока нет больниц.
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Modal Добавление Больницы -->
+<div id="add-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[60] hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden">
+        <div class="flex justify-between items-center p-6 border-b border-slate-800">
+            <h3 class="text-xl font-bold text-white">Регистрация новой больницы</h3>
+            <button onclick="document.getElementById('add-modal').classList.add('hidden')" class="text-slate-400 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+        </div>
+        <form method="POST" action="{% url 'medcore_dashboard' %}" class="p-6 space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Название</label>
+                <input type="text" name="name" required placeholder="ООО 'Health Clinic'" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-medcore-500 outline-none text-white transition-all text-sm">
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Регион</label>
+                    <select name="region" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-medcore-500 outline-none text-white transition-all text-sm">
+                        <option value="" disabled selected>Выберите регион...</option>
+                        <option value="г. Ташкент">г. Ташкент</option>
+                        <option value="Ташкентская область">Ташкентская область</option>
+                        <option value="Самаркандская область">Самаркандская область</option>
+                        <option value="Бухарская область">Бухарская область</option>
+                        <option value="Андижанская область">Андижанская область</option>
+                        <option value="Ферганская область">Ферганская область</option>
+                        <option value="Наманганская область">Наманганская область</option>
+                        <option value="Кашкадарьинская область">Кашкадарьинская область</option>
+                        <option value="Сурхандарьинская область">Сурхандарьинская область</option>
+                        <option value="Сырдарьинская область">Сырдарьинская область</option>
+                        <option value="Джизакская область">Джизакская область</option>
+                        <option value="Навоийская область">Навоийская область</option>
+                        <option value="Хорезмская область">Хорезмская область</option>
+                        <option value="Республика Каракалпакстан">Республика Каракалпакстан</option>
+                    </select>
+                </div>
+                <div class="flex gap-4">
+                    <div class="w-1/2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Город / Район</label>
+                        <input type="text" name="city" required placeholder="Юнусабадский р-н" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-medcore-500 outline-none text-white transition-all text-sm">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Улица и Дом</label>
+                        <input type="text" name="street" required placeholder="ул. Темура 12" class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-medcore-500 outline-none text-white transition-all text-sm">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 flex justify-between">
+                    API Ключ (Уникальный)
+                    <button type="button" onclick="document.getElementById('api-input').value = 'MED-' + Math.random().toString(36).substr(2, 9).toUpperCase()" class="text-medcore-400 hover:text-medcore-300">Сгенерировать</button>
+                </label>
+                <input type="text" id="api-input" name="api_key" required class="w-full px-4 py-3 bg-slate-800 border border-slate-700 rounded-xl focus:border-medcore-500 outline-none text-medcore-300 font-mono transition-all text-sm">
+            </div>
+            <div class="pt-2">
+                <button type="submit" class="w-full py-3 bg-medcore-600 hover:bg-medcore-500 text-white font-bold rounded-xl shadow-lg transition-all">
+                    Зарегистрировать Больницу
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

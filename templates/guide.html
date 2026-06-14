@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}Инструкция и Обзор Интерфейса | MedCore{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-display font-bold text-slate-900 mb-4">Инструкция по использованию системы</h1>
+        <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+            Здесь вы можете ознакомиться с интерфейсами различных ролей в системе MedCore. 
+            Это статическая демонстрация (внешняя оболочка) для понимания функционала без подключения к базе данных.
+        </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap justify-center gap-4 mb-8">
+        <button onclick="showTab('patient')" id="tab-patient" class="px-6 py-3 rounded-full font-bold transition-all bg-primary-600 text-white shadow-lg">Пациент</button>
+        <button onclick="showTab('doctor')" id="tab-doctor" class="px-6 py-3 rounded-full font-bold transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm">Врач</button>
+        <button onclick="showTab('registry')" id="tab-registry" class="px-6 py-3 rounded-full font-bold transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm">Регистратура</button>
+        <button onclick="showTab('admin')" id="tab-admin" class="px-6 py-3 rounded-full font-bold transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm">Администратор</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="bg-white rounded-3xl shadow-xl border border-slate-200 overflow-hidden">
+        
+        <!-- Patient Tab -->
+        <div id="content-patient" class="tab-content p-8">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Личный кабинет пациента</h2>
+                <p class="text-slate-500">Пациенты видят свою общую медицинскую карточку ("Зеркало Здоровья") и расшифрованные медицинские записи.</p>
+            </div>
+            <!-- Mockup Patient -->
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-bold text-xl">Иванов Иван Иванович</h3>
+                    <span class="bg-primary-100 text-primary-700 px-3 py-1 rounded-full text-sm font-bold">ПИНФЛ: 12345678901234</span>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 border-t-4 border-t-red-500">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Группа крови</p>
+                        <p class="text-xl font-bold">A(II) Rh+</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 border-t-4 border-t-primary-500">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Рост / Вес</p>
+                        <p class="text-xl font-bold">180 см / 75 кг</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 border-t-4 border-t-yellow-500">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Аллергии</p>
+                        <p class="text-sm font-medium">Пенициллин</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 border-t-4 border-t-purple-500">
+                        <p class="text-xs text-slate-500 font-bold uppercase mb-1">Заболевания</p>
+                        <p class="text-sm font-medium">Отсутствуют</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h4 class="font-bold text-lg mb-4">Медицинская запись (Консультация)</h4>
+                    <p class="text-sm text-slate-600 mb-2"><strong>Диагноз:</strong> ОРВИ</p>
+                    <p class="text-sm text-slate-600"><strong>Рекомендации:</strong> Постельный режим, обильное питье.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doctor Tab -->
+        <div id="content-doctor" class="tab-content p-8 hidden">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Рабочий стол Врача</h2>
+                <p class="text-slate-500">Врачи используют ПИНФЛ для запроса данных пациента. Они могут создавать новые зашифрованные записи и направления.</p>
+            </div>
+            <!-- Mockup Doctor -->
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                <div class="max-w-md mx-auto bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center mb-8">
+                    <h3 class="font-bold text-lg mb-4">Поиск пациента</h3>
+                    <input type="text" placeholder="Введите ПИНФЛ (14 цифр)" class="w-full px-4 py-2 border rounded-lg mb-4" disabled>
+                    <button class="w-full bg-primary-600 text-white font-bold py-2 rounded-lg" disabled>Найти карточку</button>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 opacity-50">
+                    <h4 class="font-bold text-lg mb-4">Создание записи</h4>
+                    <textarea class="w-full border rounded-lg p-3 h-24 mb-4" placeholder="Жалобы, Анамнез, Лечение..." disabled></textarea>
+                    <button class="bg-teal-600 text-white font-bold py-2 px-6 rounded-lg" disabled>Зашифровать и сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registry Tab -->
+        <div id="content-registry" class="tab-content p-8 hidden">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Регистратура</h2>
+                <p class="text-slate-500">Регистратор создает профиль пациента, генерирует начальные ключи и записывает базовые параметры (рост, вес).</p>
+            </div>
+            <!-- Mockup Registry -->
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4">Регистрация нового пациента</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <input type="text" placeholder="ФИО" class="border rounded-lg p-2" disabled>
+                        <input type="text" placeholder="ПИНФЛ" class="border rounded-lg p-2" disabled>
+                        <input type="text" placeholder="Телефон" class="border rounded-lg p-2" disabled>
+                        <input type="date" class="border rounded-lg p-2" disabled>
+                    </div>
+                    <button class="bg-primary-600 text-white font-bold py-2 px-6 rounded-lg" disabled>Сгенерировать ключи и сохранить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="content-admin" class="tab-content p-8 hidden">
+            <div class="mb-8 border-b pb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Панель Администратора Клиники</h2>
+                <p class="text-slate-500">Администратор управляет персоналом своего филиала и мониторит безопасность (кто и чью карту открывал).</p>
+            </div>
+            <!-- Mockup Admin -->
+            <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 flex gap-6">
+                <div class="w-1/2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 class="font-bold text-lg mb-4">Добавление сотрудника</h3>
+                    <input type="text" placeholder="Имя сотрудника" class="w-full border rounded-lg p-2 mb-3" disabled>
+                    <select class="w-full border rounded-lg p-2 mb-3" disabled>
+                        <option>Врач</option>
+                        <option>Регистратор</option>
+                    </select>
+                    <button class="w-full bg-primary-600 text-white font-bold py-2 rounded-lg" disabled>Создать профиль</button>
+                </div>
+                <div class="w-1/2 bg-slate-900 text-white p-6 rounded-xl shadow-sm">
+                    <h3 class="font-bold text-lg mb-4 text-slate-200">Монитор безопасности</h3>
+                    <div class="text-xs font-mono text-green-400">
+                        <p>[10:45:01] Доктор Смирнов запросил карту ПИНФЛ 123...</p>
+                        <p>[10:50:12] Создана новая мед. запись (AES-256)</p>
+                        <p>[11:05:00] Регистратор добавил пациента</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function showTab(tabName) {
+        // Hide all contents
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+        // Reset all buttons
+        document.querySelectorAll('button[id^="tab-"]').forEach(btn => {
+            btn.className = "px-6 py-3 rounded-full font-bold transition-all bg-white text-slate-600 hover:bg-slate-50 shadow-sm";
+        });
+        
+        // Show selected content
+        document.getElementById('content-' + tabName).classList.remove('hidden');
+        // Highlight selected button
+        document.getElementById('tab-' + tabName).className = "px-6 py-3 rounded-full font-bold transition-all bg-primary-600 text-white shadow-lg";
+    }
+</script>
+{% endblock %}

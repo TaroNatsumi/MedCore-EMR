@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Медицинская Система{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'/></svg>">
+    
+    <!-- Google Fonts: Inter & Outfit for modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS (CDN for prototype) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Intro.js for Tutorials -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6', // Teal
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            900: '#134e4a',
+                        },
+                        secondary: {
+                            500: '#3b82f6', // Blue
+                            600: '#2563eb',
+                        },
+                        dark: '#0f172a',
+                        darker: '#0b0f19',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Premium Custom Utilities */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(to right, #0d9488, #2563eb);
+        }
+        
+        body {
+            background-color: #f8fafc;
+            background-image: radial-gradient(circle at top right, #e0f2fe 0%, transparent 40%),
+                              radial-gradient(circle at bottom left, #ccfbf1 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        /* Smooth transitions */
+        * {
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 flex justify-between items-center mb-8">
+        <a href="#" onclick="handleLogoClick(event)" class="flex items-center gap-3 group">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-105 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+            </div>
+            <span class="font-display font-bold text-2xl tracking-tight text-slate-900">Med<span class="text-primary-600">Core</span></span>
+        </a>
+        
+        <div>
+            {% if '/medcore/' in request.path and request.session.medcore_admin_id %}
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-slate-600">{{ medcore_user.full_name|default:"MedCore Admin" }} (MedCore Admin)</span>
+                    <a href="{% url 'medcore_logout' %}" class="px-4 py-2 text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 rounded-lg shadow-md transition-transform hover:-translate-y-0.5">Выйти из MedCore</a>
+                </div>
+            {% elif '/patient/' in request.path and request.session.patient_pinfl %}
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-slate-600">Пациент: {{ request.session.patient_name }}</span>
+                    <a href="{% url 'logout' %}?type=patient" class="px-4 py-2 text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 rounded-lg shadow-md transition-transform hover:-translate-y-0.5">Выйти из профиля пациента</a>
+                </div>
+            {% elif request.user.is_authenticated and '/medcore/' not in request.path and '/patient/' not in request.path %}
+                <div class="flex items-center gap-4">
+                    <span class="text-sm font-medium text-slate-600">{{ request.user.full_name }} ({{ request.user.get_role_display }})</span>
+                    {% if request.user.role == 'doctor' or request.user.role == 'lab_tech' %}
+                        <a href="{% url 'employee_profile' %}" class="px-3 py-2 text-sm font-bold text-primary-600 hover:text-primary-700 bg-primary-50 rounded-lg transition-colors">Мой Профиль</a>
+                    {% endif %}
+                    <a href="{% url 'logout' %}?type=employee" class="px-4 py-2 text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 rounded-lg shadow-md transition-transform hover:-translate-y-0.5">Выйти из клиники</a>
+                </div>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 lg:px-8 pb-12 animate-fade-in-up">
+        {% if messages %}
+            <div class="mb-6 space-y-2 max-w-lg mx-auto">
+                {% for message in messages %}
+                    <div class="px-4 py-3 rounded-lg border {% if message.tags == 'error' %}bg-red-50 border-red-200 text-red-700{% else %}bg-teal-50 border-teal-200 text-teal-700{% endif %} shadow-sm flex items-center gap-3">
+                        {% if message.tags == 'error' %}
+                            <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {% else %}
+                            <svg class="w-5 h-5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        {% endif %}
+                        <span class="font-medium text-sm">{{ message }}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Script for interactive elements -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Global tutorial initialization
+            if (localStorage.getItem('medcore_tutorial') === 'true') {
+                const pageKey = 'tutorial_seen_' + window.location.pathname;
+                if (!localStorage.getItem(pageKey)) {
+                    if (document.querySelectorAll('[data-intro]').length > 0) {
+                        setTimeout(() => {
+                            introJs().setOptions({
+                                nextLabel: 'Далее',
+                                prevLabel: 'Назад',
+                                skipLabel: 'Пропустить',
+                                doneLabel: 'Готово',
+                                showStepNumbers: false,
+                                showProgress: true
+                            }).oncomplete(function() {
+                                localStorage.setItem(pageKey, 'true');
+                            }).onexit(function() {
+                                localStorage.setItem(pageKey, 'true');
+                            }).start();
+                        }, 500); // Small delay to let animations finish
+                    }
+                }
+            }
+        });
+
+        function handleLogoClick(event) {
+            event.preventDefault();
+            const isDemo = true;
+            
+            if (isDemo) {
+                document.getElementById('logoResetModal').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('logoResetModalContent').classList.remove('scale-95', 'opacity-0');
+                }, 10);
+            } else {
+                window.location.href = "{% url 'landing' %}";
+            }
+        }
+
+        function closeLogoModal() {
+            const modal = document.getElementById('logoResetModal');
+            const modalContent = document.getElementById('logoResetModalContent');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    </script>
+
+    <!-- Logo Reset Warning Modal -->
+    <div id="logoResetModal" class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl scale-95 opacity-0 transition-all duration-300" id="logoResetModalContent">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-900 mb-2 text-center">Внимание! Сброс данных</h3>
+            <p class="text-slate-500 text-center mb-8">Возврат на главную страницу приведет к полному сбросу демо-базы и очистке ваших изменений. Продолжить?</p>
+            <div class="flex gap-3 mt-4">
+                <button onclick="closeLogoModal()" class="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl transition-colors">
+                    Не согласен
+                </button>
+                <a href="{% url 'reset_demo' %}" class="flex-1 py-3 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-lg transition-colors text-center inline-block">
+                    Согласен
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

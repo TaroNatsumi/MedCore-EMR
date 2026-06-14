@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+
+{% block title %}ИС Медицинская Карта | Админ-Панель{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-6">
+    <!-- Header -->
+    {% include 'components/dashboard_header.html' %}
+    
+    <div class="flex gap-4 mb-6 border-b border-slate-200">
+        <span class="px-4 py-2 font-bold text-primary-600 border-b-2 border-primary-600">Системный Обзор</span>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Employees Panel Widget -->
+        <div class="glass-panel p-6 rounded-2xl flex flex-col h-full relative" data-intro="Здесь вы можете управлять сотрудниками вашей клиники, добавлять новых врачей и регистраторов." data-step="1">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-display font-bold text-slate-800 uppercase tracking-wider">Управление Сотрудниками</h2>
+            </div>
+            
+            <a href="{% url 'admin_employees_panel' %}" class="block p-8 bg-gradient-to-r from-secondary-500 to-primary-500 rounded-xl text-center shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 mb-8 group">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-white/30 transition-colors">
+                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <h3 class="text-white font-bold text-lg mb-1">Открыть Панель Сотрудников</h3>
+                <p class="text-white/80 text-sm">Поиск, графики работы, статистика</p>
+            </a>
+
+            <!-- Add Employee Form -->
+            <div class="mt-6 pt-6 border-t border-slate-200">
+                <h3 class="text-sm font-bold text-slate-700 mb-3 uppercase tracking-wider">Добавить Сотрудника</h3>
+                <form method="POST" action="{% url 'admin_dashboard' %}" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="add_doctor">
+
+                    <input type="text" name="full_name" placeholder="ФИО (например, Смирнова О.П.)" required
+                        class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm">
+                    <input type="email" name="email" placeholder="Email (login)" required
+                        class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm">
+                    <input type="text" name="password" placeholder="Временный пароль" required
+                        class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm">
+                    
+                    <select name="role" id="role-select" onchange="updateSpecialties()" required class="px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm bg-white">
+                        <option value="doctor" selected>Врач</option>
+                        <option value="lab_tech">Лаборант / Диагност</option>
+                        <option value="registry">Регистратура</option>
+                    </select>
+                    
+                    <select name="specialty" id="specialty-select" required class="col-span-2 px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm bg-white">
+                        <option value="" disabled selected>Выберите должность / специальность...</option>
+                        <optgroup id="opt-doctor" label="Врачи">
+                            <option value="Терапевт">Терапевт</option>
+                            <option value="Хирург">Хирург</option>
+                            <option value="Анестезиолог">Анестезиолог</option>
+                            <option value="Педиатр">Педиатр</option>
+                            <option value="Кардиолог">Кардиолог</option>
+                            <option value="Невролог">Невролог</option>
+                            <option value="Офтальмолог">Офтальмолог</option>
+                            <option value="Травматолог">Травматолог</option>
+                        </optgroup>
+                        <optgroup id="opt-lab" label="Лаборатория и Диагностика" style="display: none;" disabled>
+                            <option value="Рентгенолог">Рентгенолог</option>
+                            <option value="Лаборант">Лаборант (Анализы)</option>
+                            <option value="УЗИ-специалист">УЗИ-специалист</option>
+                            <option value="Врач МРТ">Врач МРТ</option>
+                            <option value="ЭКГ-специалист">ЭКГ-специалист</option>
+                        </optgroup>
+                        <optgroup id="opt-registry" label="Регистратура" style="display: none;" disabled>
+                            <option value="Регистратор">Регистратор</option>
+                            <option value="Старший регистратор">Старший регистратор</option>
+                        </optgroup>
+                    </select>
+
+                    <button type="submit"
+                        class="px-4 py-2 bg-secondary-600 hover:bg-secondary-700 text-white font-bold rounded-lg shadow-sm transition-all text-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Добавить в систему
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Security Monitor & Stats Column -->
+        <div class="space-y-8 flex flex-col">
+
+            <!-- Clinic Statistics -->
+            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden shrink-0">
+                <div class="flex justify-between items-start mb-6 relative z-10">
+                    <h2 class="text-xl font-display font-bold text-slate-800 uppercase tracking-wider">Статистика
+                        Клиники</h2>
+                    <span class="px-3 py-1 bg-green-100 text-green-700 font-bold text-xs rounded-full">REAL-TIME</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 relative z-10">
+                    <div
+                        class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Приемов за неделю</p>
+                        <p class="text-4xl font-display font-bold text-primary-600">{{ weekly_patients }}</p>
+                    </div>
+                    <div
+                        class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center items-center text-center">
+                        <p class="text-xs font-bold text-slate-500 uppercase mb-1">Приемов сегодня</p>
+                        <p class="text-4xl font-display font-bold text-secondary-600">{{ daily_patients }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Settings -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 shrink-0">
+                <!-- Global DB Status -->
+                <div
+                    class="bg-gradient-to-br from-primary-500 to-primary-700 p-6 rounded-2xl text-white shadow-lg relative overflow-hidden">
+                    <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white opacity-10 rounded-full blur-xl"></div>
+                    <h3 class="font-bold flex items-center gap-2 mb-4 text-sm uppercase tracking-wider">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Global DB (Cloud)
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <p class="flex justify-between text-primary-100 border-b border-primary-400/50 pb-1">
+                            <span>Статус:</span> <span class="font-bold text-white">Подключено</span></p>
+                        <p class="flex justify-between text-primary-100"><span>Записей:</span> <span
+                                class="font-bold text-white">Шифруются AES</span></p>
+                    </div>
+                </div>
+
+                <!-- Local Temp DB Status -->
+                <div class="bg-white border-2 border-red-100 p-6 rounded-2xl shadow-sm relative">
+                    <h3 class="font-bold text-slate-800 mb-4 uppercase tracking-wider text-sm">Временная БД (Local)</h3>
+                    <div class="space-y-3 text-sm">
+                        <p class="flex justify-between text-slate-500">
+                            <span>Активных сессий:</span>
+                            <span
+                                class="font-bold {% if temp_sessions_count > 0 %}text-red-500{% else %}text-green-500{% endif %}">
+                                {{ temp_sessions_count }}
+                            </span>
+                        </p>
+
+                        <form method="POST" action="{% url 'admin_dashboard' %}" class="mt-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="wipe_temp_db">
+                            <button type="submit"
+                                class="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold rounded-lg transition-all text-sm flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Выполнить The Wipe
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Monitor -->
+            <div class="glass-panel p-6 rounded-2xl flex-grow flex flex-col mt-8">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-2">
+                    <h2 class="text-lg font-display font-bold text-slate-800 uppercase tracking-wider">Монитор Безопасности</h2>
+                    <span class="px-2 py-1 bg-slate-100 text-slate-500 text-xs font-bold rounded">15 ПОСЛЕДНИХ</span>
+                </div>
+                
+                <div class="flex gap-2 mb-4">
+                    <button type="button" class="px-4 py-2 bg-primary-500 text-white text-sm font-bold rounded-lg transition-colors cursor-default" id="emp-tab">Логи Сотрудников</button>
+                </div>
+
+                <div id="emp-logs" class="overflow-x-auto overflow-y-auto max-h-[300px] border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-sm text-slate-600">
+                        <thead class="text-xs uppercase bg-slate-50 text-slate-500 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-3 border-b border-slate-200">Время</th>
+                                <th class="px-4 py-3 border-b border-slate-200">Сотрудник</th>
+                                <th class="px-4 py-3 border-b border-slate-200">Действие</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 bg-white">
+                            {% for log in audit_logs %}
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-4 py-3 font-medium whitespace-nowrap text-xs">{{ log.timestamp|date:"d M H:i" }}</td>
+                                <td class="px-4 py-3 font-bold text-slate-800">{{ log.employee.full_name }}</td>
+                                <td class="px-4 py-3 text-primary-600 text-xs">{{ log.action }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center py-8 text-slate-500">Логов пока нет</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Patient logs removed -->
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateSpecialties() {
+        const role = document.getElementById('role-select').value;
+        const optDoctor = document.getElementById('opt-doctor');
+        const optLab = document.getElementById('opt-lab');
+        const optRegistry = document.getElementById('opt-registry');
+        const specialtySelect = document.getElementById('specialty-select');
+        
+        [optDoctor, optLab, optRegistry].forEach(opt => {
+            if(opt) {
+                opt.style.display = 'none';
+                opt.disabled = true;
+            }
+        });
+        
+        if (role === 'doctor') {
+            optDoctor.style.display = '';
+            optDoctor.disabled = false;
+        } else if (role === 'lab_tech') {
+            optLab.style.display = '';
+            optLab.disabled = false;
+        } else if (role === 'registry') {
+            optRegistry.style.display = '';
+            optRegistry.disabled = false;
+        }
+        specialtySelect.value = '';
+    }
+    document.addEventListener('DOMContentLoaded', updateSpecialties);
+</script>
+{% endblock %}

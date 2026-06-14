@@ -1,0 +1,63 @@
+{% extends "medcore_base.html" %}
+
+{% block title %}Трекинг Процессинга{% endblock %}
+
+{% block content %}
+<div class="mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div>
+        <h2 class="text-3xl font-display font-bold text-white tracking-wide mb-2">Журнал Процессинга</h2>
+        <p class="text-sm text-slate-400">Слежка за безопасностью: просмотр того, кто, где и когда получал доступ к медицинским данным.</p>
+    </div>
+    
+    <form method="GET" action="{% url 'medcore_processing' %}" class="flex gap-2">
+        <select name="hospital_id" onchange="this.form.submit()" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-white outline-none focus:border-medcore-500 text-sm">
+            <option value="">Все Больницы</option>
+            {% for h in hospitals %}
+                <option value="{{ h.id }}" {% if selected_hospital == h.id|stringformat:"s" %}selected{% endif %}>{{ h.name }}</option>
+            {% endfor %}
+        </select>
+        {% if selected_hospital %}
+        <a href="{% url 'medcore_processing' %}" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-xl text-slate-300 font-bold text-sm transition-colors flex items-center justify-center">Сброс</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-400">
+            <thead class="text-xs uppercase bg-slate-800/50 text-slate-500 border-b border-slate-800">
+                <tr>
+                    <th class="px-6 py-4 font-bold">Дата / Время</th>
+                    <th class="px-6 py-4 font-bold">Больница</th>
+                    <th class="px-6 py-4 font-bold">Сотрудник</th>
+                    <th class="px-6 py-4 font-bold">Роль</th>
+                    <th class="px-6 py-4 font-bold">ПИНФЛ Пациента</th>
+                    <th class="px-6 py-4 font-bold w-1/3">Действие</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800">
+                {% for log in logs %}
+                <tr class="hover:bg-slate-800/30 transition-colors">
+                    <td class="px-6 py-4 whitespace-nowrap text-slate-300">{{ log.timestamp|date:"d M Y, H:i:s" }}</td>
+                    <td class="px-6 py-4 font-bold text-white">
+                        {% if log.hospital %}
+                            <span class="px-2 py-1 bg-medcore-500/10 text-medcore-400 border border-medcore-500/20 rounded">{{ log.hospital.name }}</span>
+                        {% else %}
+                            <span class="text-slate-500">Система</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-slate-300">{{ log.employee_name }}</td>
+                    <td class="px-6 py-4"><span class="px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-slate-300">{{ log.employee_role }}</span></td>
+                    <td class="px-6 py-4 text-medcore-300 font-mono">{{ log.patient_pinfl }}</td>
+                    <td class="px-6 py-4 text-slate-300">{{ log.action }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-500 font-medium">Логов процессинга пока нет.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

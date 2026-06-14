@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}ИС Медицинская Карта | Профиль Врача{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-6">
+    <div class="flex items-center justify-between border-b border-slate-200 pb-4 mb-8">
+        <div class="flex items-center gap-6">
+            {% if request.user.role == 'doctor' %}
+            <a href="{% url 'doctor_dashboard' %}" class="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Назад
+            </a>
+            {% elif request.user.role == 'lab_tech' %}
+            <a href="{% url 'lab_dashboard' %}" class="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg transition-colors text-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Назад
+            </a>
+            {% endif %}
+            <h1 class="text-2xl font-display font-bold text-slate-900">Личный Кабинет Сотрудника</h1>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Информация о враче -->
+        <div class="col-span-1 space-y-6">
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-r from-primary-500 to-secondary-500 flex items-center justify-center text-white text-3xl font-bold mb-4 shadow-lg">
+                    {{ request.user.full_name|make_list|first }}
+                </div>
+                <h2 class="text-xl font-bold text-center text-slate-800">{{ request.user.full_name }}</h2>
+                <p class="text-center text-primary-600 font-medium mb-6">{{ request.user.specialty|default:"Врач" }}</p>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                        <span class="text-slate-500">Смена:</span>
+                        <span class="font-bold text-slate-800">{{ request.user.get_shift_display }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-2">
+                        <span class="text-slate-500">Email (Логин):</span>
+                        <span class="font-bold text-slate-800">{{ request.user.email }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Смена пароля -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-lg font-bold text-slate-800 mb-4">Изменить пароль</h3>
+                <form method="POST" action="{% url 'employee_profile' %}" class="space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="change_password">
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Новый пароль</label>
+                        <input type="password" name="new_password" required minlength="4" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 text-sm">
+                    </div>
+                    
+                    <button type="submit" class="w-full px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-lg transition-colors text-sm">
+                        Обновить пароль
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- График работы (Календарь) -->
+        <div class="col-span-1 md:col-span-2 space-y-6">
+            
+            <!-- Статистика -->
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between shadow-sm">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Ваша статистика</h3>
+                    <p class="text-slate-500 text-sm">Пациентов / анализов принято сегодня</p>
+                </div>
+                <div class="text-4xl font-display font-bold text-primary-600 bg-primary-50 px-6 py-3 rounded-xl border border-primary-100">
+                    {{ stats.today }}
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-2xl h-full shadow-sm">
+                <h3 class="text-lg font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    График работы (Рабочие дни)
+                </h3>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                    
+                    <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col h-32 shadow-sm">
+                        <div class="bg-slate-50 py-2 text-center border-b border-slate-200">
+                            <span class="font-bold text-slate-700 text-sm">Понедельник</span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center p-2 {% if request.user.work_schedule.monday == 'Выходной' %}bg-slate-100{% else %}bg-primary-50{% endif %}">
+                            <span class="text-sm font-bold {% if request.user.work_schedule.monday == 'Выходной' %}text-slate-500{% else %}text-primary-700{% endif %}">
+                                {{ request.user.work_schedule.monday|default:request.user.get_shift_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col h-32 shadow-sm">
+                        <div class="bg-slate-50 py-2 text-center border-b border-slate-200">
+                            <span class="font-bold text-slate-700 text-sm">Вторник</span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center p-2 {% if request.user.work_schedule.tuesday == 'Выходной' %}bg-slate-100{% else %}bg-primary-50{% endif %}">
+                            <span class="text-sm font-bold {% if request.user.work_schedule.tuesday == 'Выходной' %}text-slate-500{% else %}text-primary-700{% endif %}">
+                                {{ request.user.work_schedule.tuesday|default:request.user.get_shift_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col h-32 shadow-sm">
+                        <div class="bg-slate-50 py-2 text-center border-b border-slate-200">
+                            <span class="font-bold text-slate-700 text-sm">Среда</span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center p-2 {% if request.user.work_schedule.wednesday == 'Выходной' %}bg-slate-100{% else %}bg-primary-50{% endif %}">
+                            <span class="text-sm font-bold {% if request.user.work_schedule.wednesday == 'Выходной' %}text-slate-500{% else %}text-primary-700{% endif %}">
+                                {{ request.user.work_schedule.wednesday|default:request.user.get_shift_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col h-32 shadow-sm">
+                        <div class="bg-slate-50 py-2 text-center border-b border-slate-200">
+                            <span class="font-bold text-slate-700 text-sm">Четверг</span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center p-2 {% if request.user.work_schedule.thursday == 'Выходной' %}bg-slate-100{% else %}bg-primary-50{% endif %}">
+                            <span class="text-sm font-bold {% if request.user.work_schedule.thursday == 'Выходной' %}text-slate-500{% else %}text-primary-700{% endif %}">
+                                {{ request.user.work_schedule.thursday|default:request.user.get_shift_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl overflow-hidden flex flex-col h-32 shadow-sm">
+                        <div class="bg-slate-50 py-2 text-center border-b border-slate-200">
+                            <span class="font-bold text-slate-700 text-sm">Пятница</span>
+                        </div>
+                        <div class="flex-grow flex flex-col justify-center items-center p-2 {% if request.user.work_schedule.friday == 'Выходной' %}bg-slate-100{% else %}bg-primary-50{% endif %}">
+                            <span class="text-sm font-bold {% if request.user.work_schedule.friday == 'Выходной' %}text-slate-500{% else %}text-primary-700{% endif %}">
+                                {{ request.user.work_schedule.friday|default:request.user.get_shift_display }}
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <div class="mt-8 p-4 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600">
+                    <p><strong>Примечание:</strong> Ваш график настраивается Главным Администратором клиники. Если вам необходимо изменить время работы, пожалуйста, обратитесь к нему.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

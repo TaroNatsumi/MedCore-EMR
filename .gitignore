@@ -1,0 +1,30 @@
+# Environments
+venv/
+env/
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Databases (CRITICAL for EMR system security)
+db.sqlite3
+employees.sqlite3
+temp.sqlite3
+*.sqlite3
+
+# Django
+*.log
+local_settings.py
+media/
+static_root/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Добро пожаловать | MedCore{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-12 mb-20 px-4">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4 tracking-tight">Добро пожаловать в MedCore</h1>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto">Выберите вашу роль для входа в глобальную медицинскую информационную систему</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <!-- Patient Card -->
+        <a href="{% url 'patient_login' %}" class="group glass-panel rounded-3xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border border-slate-200 hover:border-primary-300 relative overflow-hidden block">
+            <div class="absolute -right-10 -top-10 w-40 h-40 bg-primary-100 rounded-full mix-blend-multiply opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-primary-50 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-primary-100 text-primary-500 group-hover:bg-primary-500 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">Я Пациент</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-6">Просмотр медицинской карты, результатов анализов и истории посещений врача в Зеркале Здоровья.</p>
+                
+                <span class="inline-flex items-center gap-2 text-primary-600 font-bold group-hover:gap-3 transition-all">
+                    Войти
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </span>
+            </div>
+        </a>
+
+        <!-- Staff Card -->
+        <a href="{% url 'employee_hospitals' %}" class="group glass-panel rounded-3xl p-8 transition-all duration-300 hover:shadow-xl hover:-translate-y-2 border border-slate-200 hover:border-slate-400 relative overflow-hidden block">
+            <div class="absolute -left-10 -bottom-10 w-40 h-40 bg-slate-100 rounded-full mix-blend-multiply opacity-50 group-hover:scale-150 transition-transform duration-700"></div>
+            
+            <div class="relative z-10 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-slate-50 rounded-2xl flex items-center justify-center mb-6 shadow-sm border border-slate-200 text-slate-600 group-hover:bg-slate-800 group-hover:text-white transition-colors duration-300">
+                    <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800 mb-3">Я Сотрудник</h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-6">Доступ к рабочему месту врача, лаборанта или администратора выбранного филиала клиники.</p>
+                
+                <span class="inline-flex items-center gap-2 text-slate-700 font-bold group-hover:gap-3 transition-all">
+                    Войти
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </span>
+            </div>
+        </a>
+    </div>
+</div>
+{% endblock %}

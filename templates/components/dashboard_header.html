@@ -1,0 +1,104 @@
+<div class="mb-10 animate-fade-in-up">
+    <!-- Header Title & User Info -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8">
+        <div>
+            <h1 class="text-3xl font-display font-bold text-slate-900">{{ dashboard_title }}</h1>
+            <p class="text-slate-500 mt-1">Добро пожаловать, <span class="font-medium text-slate-700">{{ request.user.full_name }}</span> 
+                {% if request.user.specialty %}(Специализация: {{ request.user.specialty }}){% endif %}
+            </p>
+        </div>
+        
+        <!-- Calendar Widget -->
+        {% if request.user.role == 'registry' %}
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2 overflow-x-auto">
+            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mr-2 ml-1">Текущая неделя</div>
+            <div class="flex gap-1">
+                <!-- Пн -->
+                <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-700 flex flex-col items-center justify-center font-bold border border-primary-100" title="Рабочий день">
+                    <span class="text-[10px]">Пн</span>
+                    <span class="w-1 h-1 rounded-full bg-primary-500 mt-0.5"></span>
+                </div>
+                <!-- Вт -->
+                <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-700 flex flex-col items-center justify-center font-bold border border-primary-100" title="Рабочий день">
+                    <span class="text-[10px]">Вт</span>
+                    <span class="w-1 h-1 rounded-full bg-primary-500 mt-0.5"></span>
+                </div>
+                <!-- Ср -->
+                <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-700 flex flex-col items-center justify-center font-bold border border-primary-100" title="Рабочий день">
+                    <span class="text-[10px]">Ср</span>
+                    <span class="w-1 h-1 rounded-full bg-primary-500 mt-0.5"></span>
+                </div>
+                <!-- Чт -->
+                <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-700 flex flex-col items-center justify-center font-bold border border-primary-100" title="Рабочий день">
+                    <span class="text-[10px]">Чт</span>
+                    <span class="w-1 h-1 rounded-full bg-primary-500 mt-0.5"></span>
+                </div>
+                <!-- Пт -->
+                <div class="w-10 h-10 rounded-xl bg-primary-50 text-primary-700 flex flex-col items-center justify-center font-bold border border-primary-100" title="Рабочий день">
+                    <span class="text-[10px]">Пт</span>
+                    <span class="w-1 h-1 rounded-full bg-primary-500 mt-0.5"></span>
+                </div>
+                <!-- Сб -->
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex flex-col items-center justify-center font-medium border border-slate-100" title="Выходной">
+                    <span class="text-[10px]">Сб</span>
+                </div>
+                <!-- Вс -->
+                <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex flex-col items-center justify-center font-medium border border-slate-100" title="Выходной">
+                    <span class="text-[10px]">Вс</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Statistics Grid -->
+    {% if request.user.role != 'admin' %}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Принято сегодня (Только Регистратура) -->
+        {% if request.user.role == 'registry' %}
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-110 transition-transform"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Принято сегодня</p>
+                    <h3 class="text-4xl font-display font-bold text-slate-800">{{ stats.today|default:"0" }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if request.user.role == 'lab_tech' %}
+        <!-- В процессе -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-yellow-50 rounded-full group-hover:scale-110 transition-transform"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">В процессе</p>
+                    <h3 class="text-4xl font-display font-bold text-slate-800">{{ stats.in_progress|default:"0" }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                </div>
+            </div>
+        </div>
+
+        <!-- Выполнено -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm relative overflow-hidden group">
+            <div class="absolute -right-6 -top-6 w-24 h-24 bg-green-50 rounded-full group-hover:scale-110 transition-transform"></div>
+            <div class="relative flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Выполнено</p>
+                    <h3 class="text-4xl font-display font-bold text-slate-800">{{ stats.completed|default:"0" }}</h3>
+                </div>
+                <div class="w-12 h-12 bg-green-100 text-green-600 rounded-2xl flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>

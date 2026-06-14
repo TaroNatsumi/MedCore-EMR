@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Сброс успешно выполнен | MedCore{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-20 text-center">
+    <div class="glass-panel p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+        <div class="w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-green-200">
+            <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+        </div>
+        <h1 class="text-3xl font-display font-bold text-slate-800 mb-4">Сброс успешно выполнен</h1>
+        <p class="text-slate-500 mb-8 leading-relaxed">Все демо-данные удалены, система возвращена в исходное состояние. Эта вкладка автоматически закроется через несколько секунд.</p>
+        
+        <button onclick="window.close()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl shadow-lg transition-colors w-full">
+            Закрыть вкладку вручную
+        </button>
+    </div>
+</div>
+
+<script>
+    // Очищаем локальное хранилище, чтобы сбросить обучение
+    localStorage.clear();
+    
+    // Пытаемся закрыть вкладку автоматически
+    setTimeout(() => {
+        window.close();
+    }, 3000);
+</script>
+{% endblock %}

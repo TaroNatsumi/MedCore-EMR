@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCore Control | Вход</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        medcore: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-900 min-h-screen flex items-center justify-center font-sans text-slate-300 relative overflow-hidden">
+    
+    <!-- Background Decor -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-medcore-900/40 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-medcore-600/20 rounded-full blur-[120px]"></div>
+    </div>
+
+    <div class="relative z-10 w-full max-w-md p-8 bg-slate-800/80 backdrop-blur-xl border border-slate-700/50 rounded-3xl shadow-2xl">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl font-display font-bold text-white mb-2 tracking-wide">MedCore <span class="text-medcore-500">Control</span></h1>
+            <p class="text-sm font-medium text-slate-400">Глобальная система управления больницами</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 p-4 rounded-xl text-sm font-bold text-center {% if message.tags == 'error' %}bg-red-500/10 text-red-400 border border-red-500/20{% else %}bg-medcore-500/10 text-medcore-400 border border-medcore-500/20{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="{% url 'medcore_login' %}" class="space-y-6">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email суперадмина</label>
+                <input type="email" name="email" required class="w-full px-5 py-3 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-medcore-500 focus:ring-1 focus:ring-medcore-500 outline-none text-white transition-all">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Пароль</label>
+                <input type="password" name="password" required class="w-full px-5 py-3 bg-slate-900/50 border border-slate-700 rounded-xl focus:border-medcore-500 focus:ring-1 focus:ring-medcore-500 outline-none text-white transition-all">
+            </div>
+            
+            <button type="submit" class="w-full py-4 bg-medcore-600 hover:bg-medcore-500 text-white font-bold rounded-xl shadow-lg shadow-medcore-900/20 transition-all flex items-center justify-center gap-2">
+                Войти в панель
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </button>
+        </form>
+
+
+    </div>
+</body>
+</html>
