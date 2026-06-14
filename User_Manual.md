@@ -7,7 +7,7 @@ MedCore is a secure, decentralized web-based Electronic Medical Record (EMR) sys
 *   **MedCore Control (Superadmin)** – a global administrative dashboard to manage the entire network of hospital branches and monitor system-wide processing logs.
 
 The system is designed to be deployed live at:
-*   **Main Portal:** `https://<your-render-url>.onrender.com`
+*   **Main Portal:** `https://medcore-emr-avzm.onrender.com`
 
 ---
 
@@ -87,7 +87,7 @@ The system is designed to be deployed live at:
 
 ### 4.2 Superadmin (MedCore Control)
 **Global Management:**
-1. Navigate to `/medcore/login/`.
+1. Navigate to `https://medcore-emr-avzm.onrender.com/medcore/login/`.
 2. Log in with Superadmin credentials.
 3. You will see a global overview of all hospital branches connected to the decentralized network.
 
