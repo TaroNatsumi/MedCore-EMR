@@ -825,8 +825,12 @@ def lab_dashboard(request):
             context['patient'] = patient
             context['searched'] = True
             
-            # Находим все НЕ ЗАВЕРШЕННЫЕ тесты пациента
-            pending_tests = LabTest.objects.using('default').filter(patient=patient, status='pending')
+            # Находим все НЕ ЗАВЕРШЕННЫЕ тесты пациента, назначенные ТОЛЬКО в этой больнице
+            pending_tests = LabTest.objects.using('default').filter(
+                patient=patient, 
+                status='pending',
+                record__hospital_id=request.user.hospital_id
+            )
             
             # Фильтрация по специализации
             spec_lower = specialty.lower()
