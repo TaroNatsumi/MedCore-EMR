@@ -603,7 +603,7 @@ def admin_employees_panel(request):
         if action == 'update_schedule':
             emp_id = request.POST.get('employee_id')
             try:
-                emp = Employee.objects.using('employees_db').get(id=emp_id)
+                emp = Employee.objects.using('employees_db').get(id=emp_id, hospital_id=request.user.hospital_id, hospital_branch=request.user.hospital_branch)
                 emp.work_schedule = {
                     'monday': request.POST.get('monday', 'Выходной'),
                     'tuesday': request.POST.get('tuesday', 'Выходной'),
@@ -629,7 +629,7 @@ def admin_employees_panel(request):
         elif action == 'delete_employee':
             emp_id = request.POST.get('employee_id')
             try:
-                emp = Employee.objects.using('employees_db').get(id=emp_id)
+                emp = Employee.objects.using('employees_db').get(id=emp_id, hospital_id=request.user.hospital_id, hospital_branch=request.user.hospital_branch)
                 emp_name = emp.full_name
                 emp.delete()
                 AuditLog.objects.using('employees_db').create(
@@ -645,7 +645,11 @@ def admin_employees_panel(request):
     role_filter = request.GET.get('role', '')
     spec_filter = request.GET.get('specialty', '')
     
-    employees = Employee.objects.using('employees_db').filter(role__in=['doctor', 'lab_tech'])
+    employees = Employee.objects.using('employees_db').filter(
+        role__in=['doctor', 'lab_tech'],
+        hospital_id=request.user.hospital_id,
+        hospital_branch=request.user.hospital_branch
+    )
     if role_filter:
         employees = employees.filter(role=role_filter)
     if spec_filter:
@@ -660,7 +664,7 @@ def admin_employees_panel(request):
     
     if selected_emp_id:
         try:
-            selected_employee = Employee.objects.using('employees_db').get(id=selected_emp_id)
+            selected_employee = Employee.objects.using('employees_db').get(id=selected_emp_id, hospital_id=request.user.hospital_id, hospital_branch=request.user.hospital_branch)
             today = timezone.now().date()
             if selected_employee.role == 'doctor':
                 emp_stats['today'] = EncryptedMedicalRecord.objects.using('default').filter(doctor_id=selected_employee.id, created_at__date=today).count()
@@ -739,7 +743,7 @@ def admin_dashboard(request):
             doctor_id = request.POST.get('doctor_id')
             shift = request.POST.get('shift')
             try:
-                doc = Employee.objects.using('employees_db').get(id=doctor_id)
+                doc = Employee.objects.using('employees_db').get(id=doctor_id, hospital_id=request.user.hospital_id, hospital_branch=request.user.hospital_branch)
                 doc.shift = shift
                 doc.save(using='employees_db')
                 AuditLog.objects.using('employees_db').create(
