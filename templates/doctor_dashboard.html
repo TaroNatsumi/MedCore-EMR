@@ -16,7 +16,7 @@
             <div data-intro="Введите 14-значный ПИНФЛ пациента, чтобы получить доступ к его медицинской карте." data-step="1">
                 {% if not patient %}<label class="block text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">ПИНФЛ пациента</label>{% endif %}
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <input type="text" name="q_pinfl" class="w-full px-5 py-4 rounded-xl border border-slate-200 bg-white focus:bg-white focus:ring-4 focus:ring-secondary-500/20 focus:border-secondary-500 outline-none text-lg font-mono tracking-widest transition-all" placeholder="Введите 14 цифр ПИНФЛ" value="{{ request.GET.q_pinfl }}">
+                    <input type="text" name="q_pinfl" required pattern="\d{14}" maxlength="14" minlength="14" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 14);" class="w-full px-5 py-4 rounded-xl border border-slate-200 bg-white focus:bg-white focus:ring-4 focus:ring-secondary-500/20 focus:border-secondary-500 outline-none text-lg font-mono tracking-widest transition-all" placeholder="Введите 14 цифр ПИНФЛ" value="{{ request.GET.q_pinfl }}">
                     <button type="submit" class="w-full sm:w-auto px-8 py-4 bg-secondary-600 hover:bg-secondary-700 text-white rounded-xl font-bold shadow-lg shadow-secondary-600/30 transition-all text-lg shrink-0">
                         НАЙТИ
                     </button>

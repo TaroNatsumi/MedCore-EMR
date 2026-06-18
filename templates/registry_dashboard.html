@@ -12,7 +12,7 @@
         <form method="GET" action="{% url 'registry_dashboard' %}" class="space-y-6">
             <div>
                 <label class="block text-sm font-bold text-slate-700 uppercase tracking-wider mb-2 text-center">ПИНФЛ Пациента</label>
-                <input type="text" name="pinfl" value="{{ request.GET.pinfl }}" class="w-full px-6 py-4 text-center text-xl font-mono tracking-[0.2em] rounded-xl border-2 border-slate-200 bg-white/80 focus:bg-white focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" placeholder="00000000000000" maxlength="14" required>
+                <input type="text" name="pinfl" value="{{ request.GET.pinfl }}" pattern="\d{14}" minlength="14" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 14);" class="w-full px-6 py-4 text-center text-xl font-mono tracking-[0.2em] rounded-xl border-2 border-slate-200 bg-white/80 focus:bg-white focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all" placeholder="00000000000000" maxlength="14" required>
             </div>
             <button type="submit" class="w-full py-4 px-6 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-bold text-lg shadow-lg shadow-slate-800/20 transition-all transform hover:-translate-y-1">
                 Проверить по Глобальной Базе
@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Серия и номер паспорта</label>
-                            <input type="text" name="passport" value="{{ patient.passport }}" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 outline-none uppercase" placeholder="AB1234567">
+                            <input type="text" name="passport" value="{{ patient.passport }}" pattern="[A-Z]{2}\d{7}" maxlength="9" minlength="9" oninput="let v=this.value.toUpperCase(); this.value=v.slice(0,2).replace(/[^A-Z]/g,'') + v.slice(2).replace(/[^0-9]/g,'').slice(0,7);" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 outline-none uppercase" placeholder="AB1234567">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Дата рождения</label>
@@ -148,7 +148,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Серия и номер паспорта</label>
-                            <input type="text" name="passport" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 outline-none uppercase" placeholder="AB1234567">
+                            <input type="text" name="passport" pattern="[A-Z]{2}\d{7}" maxlength="9" minlength="9" oninput="let v=this.value.toUpperCase(); this.value=v.slice(0,2).replace(/[^A-Z]/g,'') + v.slice(2).replace(/[^0-9]/g,'').slice(0,7);" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary-500 outline-none uppercase" placeholder="AB1234567">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Дата рождения</label>
