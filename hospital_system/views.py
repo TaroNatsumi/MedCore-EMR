@@ -646,7 +646,7 @@ def admin_employees_panel(request):
     spec_filter = request.GET.get('specialty', '')
     
     employees = Employee.objects.using('employees_db').filter(
-        role__in=['doctor', 'lab_tech'],
+        role__in=['doctor', 'lab_tech', 'registry'],
         hospital_id=request.user.hospital_id,
         hospital_branch=request.user.hospital_branch
     )
